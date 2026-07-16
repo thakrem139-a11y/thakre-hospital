@@ -693,6 +693,136 @@
             font-size: 0.8rem;
             color: #64748b;
         }
+
+        /* ===== MOBILE & TABLET RESPONSIVENESS ===== */
+        .nav-toggle-btn {
+            display: none;
+        }
+
+        @media (max-width: 992px) {
+            .navbar {
+                padding: 0 1.5rem;
+            }
+            .nav-toggle-btn {
+                display: flex !important;
+            }
+            .nav-links, .nav-actions {
+                display: none;
+            }
+            
+            /* Active mobile navigation dropdown drawer */
+            .navbar.mobile-active {
+                height: auto;
+                flex-wrap: wrap;
+                padding-bottom: 1.5rem;
+            }
+            
+            .navbar.mobile-active .nav-links {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                order: 2;
+                margin-top: 1rem;
+                gap: 0.5rem;
+                align-items: stretch;
+            }
+            
+            .navbar.mobile-active .nav-links li {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .navbar.mobile-active .nav-links a {
+                display: block;
+                width: 100%;
+                padding: 0.75rem 1.25rem;
+                border-radius: var(--radius-sm);
+            }
+            
+            .navbar.mobile-active .nav-actions {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                order: 3;
+                margin-top: 1rem;
+                gap: 0.75rem;
+                align-items: stretch;
+            }
+            
+            .navbar.mobile-active .btn-nav-outline,
+            .navbar.mobile-active .btn-nav-primary {
+                justify-content: center;
+                width: 100%;
+                padding: 0.75rem 1.25rem;
+            }
+
+            /* Hero responsive styling */
+            .hero {
+                grid-template-columns: 1fr;
+                padding: 6.5rem 1.5rem 3rem;
+                gap: 3rem;
+                text-align: center;
+            }
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            .hero-desc {
+                margin: 0 auto 2rem;
+            }
+            .hero-actions {
+                justify-content: center;
+            }
+            .hero-stats {
+                justify-content: center;
+                gap: 2rem;
+            }
+            .hero-card {
+                padding: 1.5rem;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            .loader-img-wrap {
+                width: 100%;
+                max-width: 480px;
+                height: auto;
+                aspect-ratio: 16/10;
+            }
+            .section {
+                padding: 4rem 1.5rem;
+            }
+            .footer {
+                padding: 3rem 1.5rem 2rem;
+            }
+            .admin-banner {
+                padding: 3rem 1.5rem;
+            }
+            .hospital-img-overlay {
+                padding: 0 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .services-grid, .doctors-grid, .why-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .admin-banner h2 {
+                font-size: 1.8rem;
+            }
+            .section-title {
+                font-size: 1.8rem;
+            }
+            .footer-top {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .footer-brand p {
+                max-width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -735,6 +865,9 @@
                 <span>Multispeciality Hospital</span>
             </div>
         </a>
+        <button class="nav-toggle-btn" id="nav-toggle" title="Toggle Navigation" style="display: none; border: none; background: transparent; font-size: 1.5rem; cursor: pointer; color: var(--secondary); align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 10px; border: 1.5px solid var(--border-color);">
+            <i class="ri-menu-line"></i>
+        </button>
         <ul class="nav-links">
             <li><a href="#home">Home</a></li>
             <li><a href="#services">Services</a></li>
@@ -1877,8 +2010,48 @@
                 msgs.scrollTop = msgs.scrollHeight;
             }, 1000);
         }
+        
+        // Mobile Navigation Toggle
+        document.addEventListener('DOMContentLoaded', () => {
+            const navToggle = document.getElementById('nav-toggle');
+            const navbar = document.querySelector('.navbar');
+            
+            if (navToggle && navbar) {
+                navToggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    navbar.classList.toggle('mobile-active');
+                    
+                    // Toggle icon between menu and close
+                    const icon = navToggle.querySelector('i');
+                    if (icon) {
+                        if (navbar.classList.contains('mobile-active')) {
+                            icon.className = 'ri-close-line';
+                        } else {
+                            icon.className = 'ri-menu-line';
+                        }
+                    }
+                });
+
+                // Close menu when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (navbar.classList.contains('mobile-active') && !navbar.contains(e.target)) {
+                        navbar.classList.remove('mobile-active');
+                        const icon = navToggle.querySelector('i');
+                        if (icon) icon.className = 'ri-menu-line';
+                    }
+                });
+
+                // Close menu when clicking on any link
+                const links = navbar.querySelectorAll('.nav-links a, .nav-actions a');
+                links.forEach(link => {
+                    link.addEventListener('click', () => {
+                        navbar.classList.remove('mobile-active');
+                        const icon = navToggle.querySelector('i');
+                        if (icon) icon.className = 'ri-menu-line';
+                    });
+                });
+            }
+        });
     </script>
-
-
 </body>
 </html>

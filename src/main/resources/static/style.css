@@ -1839,10 +1839,121 @@ textarea:focus {
 .btn-patient-portal-link i { font-size: 1rem; }
 
 
+/* --- MOBILE & TABLET RESPONSIVENESS --- */
+@media (max-width: 1024px) {
+    .sidebar {
+        left: -280px;
+        transition: left var(--transition-normal);
+        position: fixed;
+        height: 100vh;
+        z-index: 1001; /* Higher than header and overlay */
+    }
+    
+    .sidebar.active {
+        left: 0;
+    }
+    
+    .sidebar-close-btn {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .sidebar-toggle-btn {
+        display: flex !important;
+    }
+    
+    .main-content {
+        margin-left: 0 !important;
+        padding: 1.5rem !important;
+    }
+    
+    /* Backdrop styling */
+    .sidebar-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.4);
+        backdrop-filter: blur(4px);
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity var(--transition-normal), visibility var(--transition-normal);
+    }
+    
+    .sidebar-backdrop.active {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
 @media (max-width: 768px) {
+    .main-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    
+    .header-right {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    
+    .header-search {
+        width: 100% !important;
+    }
+    
+    .header-right .btn-patient-portal-link {
+        justify-content: center;
+    }
+    
+    .date-widget {
+        justify-content: center;
+    }
+    
+    .dashboard-main {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr !important;
+    }
+    
+    /* Let tables scroll horizontally if content overflows */
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Compact stats grid on tiny screens */
+    .stats-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem;
+    }
+    
+    /* Make QR code strip layout mobile friendly */
+    .qr-payment-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 1.5rem;
+        gap: 1rem;
+    }
+    .qr-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .qr-brand {
+        justify-content: center;
+    }
+
     .charts-grid { grid-template-columns: 1fr; }
     .dept-grid { grid-template-columns: 1fr; }
-    .emergency-contacts-grid { grid-template-columns: 1fr 1fr; }
+    .emergency-contacts-grid { grid-template-columns: 1fr; }
     .chatbot-window { width: calc(100vw - 32px); right: 16px; bottom: 90px; }
     .notif-panel { width: 300px; right: -60px; }
 }
+
