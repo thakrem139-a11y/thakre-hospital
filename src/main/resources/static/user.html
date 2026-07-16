@@ -1,0 +1,1884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thakre Multispeciality Hospital | Patient Portal</title>
+    <meta name="description" content="Book appointments, find doctors, and manage your health at Thakre Multispeciality Hospital — your trusted healthcare partner.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Remix Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+
+    <style>
+        /* ===== CSS VARIABLES ===== */
+        :root {
+            --primary: #0d9488;
+            --primary-light: #ccfbf1;
+            --primary-hover: #0f766e;
+            --primary-dark: #065f46;
+            --secondary: #0f172a;
+            --accent: #14b8a6;
+            --accent2: #6366f1;
+            --bg-main: #f0fdfa;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --radius-sm: 10px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --shadow-sm: 0 1px 4px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+            --shadow-lg: 0 12px 40px rgba(0,0,0,0.12);
+            --shadow-xl: 0 24px 60px rgba(0,0,0,0.16);
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+        h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; }
+
+        /* ===== LOADER ===== */
+        #page-loader {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: linear-gradient(135deg, #0f172a 0%, #134e4a 60%, #0f172a 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+        #page-loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .loader-img-wrap {
+            width: 560px;
+            height: 360px;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 0 80px rgba(13,148,136,0.6), 0 0 160px rgba(13,148,136,0.25);
+            border: 3px solid rgba(13,148,136,0.5);
+            animation: loaderPulse 2s ease-in-out infinite;
+            margin-bottom: 2rem;
+        }
+        .loader-img-wrap img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        @keyframes loaderPulse {
+            0%, 100% { box-shadow: 0 0 40px rgba(13,148,136,0.4), 0 0 80px rgba(13,148,136,0.15); }
+            50% { box-shadow: 0 0 70px rgba(13,148,136,0.7), 0 0 140px rgba(13,148,136,0.3); }
+        }
+        .loader-brand {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .loader-brand h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem; font-weight: 900;
+            color: white; letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .loader-brand p {
+            color: #5eead4; font-size: 0.85rem;
+            font-weight: 500; letter-spacing: 1.5px;
+            text-transform: uppercase; margin-top: 0.35rem;
+        }
+        .loader-bar-wrap {
+            width: 240px;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+        .loader-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary));
+            background-size: 200% 100%;
+            border-radius: 999px;
+            width: 0%;
+        }
+        .loader-bar.animating {
+            animation: loaderFill 8s ease-in-out forwards, loaderShimmer 1s linear infinite;
+        }
+        @keyframes loaderFill { from { width: 0%; } to { width: 100%; } }
+        @keyframes loaderShimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+        .loader-dots {
+            display: flex; gap: 0.5rem; margin-top: 1.25rem;
+        }
+        .loader-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--primary);
+            animation: dotBounce 1.2s ease-in-out infinite;
+        }
+        .loader-dot:nth-child(2) { animation-delay: 0.2s; }
+        .loader-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes dotBounce { 0%,80%,100%{transform:scale(0.6);opacity:0.4} 40%{transform:scale(1);opacity:1} }
+        /* Hide progress and dots until button click */
+        #loader-progress { display: none; align-items: center; flex-direction: column; gap: 0; }
+        #loader-progress.started { display: flex; }
+        /* Loader CTA Button */
+        .loader-cta-btn {
+            margin-top: 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.65rem;
+            padding: 1rem 2.4rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            border: none;
+            border-radius: 999px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(13,148,136,0.55), 0 8px 20px rgba(13,148,136,0.35);
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            animation: btnGlow 2s ease-in-out infinite;
+        }
+        .loader-cta-btn:hover {
+            transform: translateY(-3px) scale(1.04);
+            box-shadow: 0 0 50px rgba(13,148,136,0.8), 0 14px 32px rgba(13,148,136,0.5);
+        }
+        .loader-cta-btn i { font-size: 1.2rem; }
+        @keyframes btnGlow {
+            0%,100% { box-shadow: 0 0 20px rgba(13,148,136,0.45), 0 6px 16px rgba(13,148,136,0.3); }
+            50% { box-shadow: 0 0 45px rgba(13,148,136,0.8), 0 10px 28px rgba(13,148,136,0.5); }
+        }
+        .loader-loading-label {
+            color: #5eead4;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+            margin-top: 0;
+        }
+
+        /* ===== HOSPITAL IMAGE STRIP ===== */
+        .hospital-img-section {
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+            height: 420px;
+        }
+        .hospital-img-section img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 30%;
+            display: block;
+            filter: brightness(0.85);
+        }
+        .hospital-img-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, rgba(13,148,136,0.65) 0%, rgba(15,23,42,0.3) 100%);
+            display: flex;
+            align-items: center;
+            padding: 0 5rem;
+        }
+        .hospital-img-text h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.8rem; font-weight: 900;
+            color: white; line-height: 1.15;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+        }
+        .hospital-img-text p {
+            color: rgba(255,255,255,0.85);
+            font-size: 1rem; max-width: 500px;
+            line-height: 1.7;
+            text-shadow: 0 1px 8px rgba(0,0,0,0.3);
+        }
+        .hospital-img-badges {
+            display: flex; gap: 0.75rem; flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+        .img-badge {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.25);
+            color: white; padding: 0.45rem 1rem;
+            border-radius: 999px; font-size: 0.8rem; font-weight: 600;
+        }
+        @media (max-width: 768px) {
+            .hospital-img-overlay { padding: 0 1.5rem; }
+            .hospital-img-text h2 { font-size: 1.8rem; }
+            .hospital-img-section { height: 300px; }
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 999px; }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 3rem; height: 72px;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(13,148,136,0.1);
+            box-shadow: 0 2px 20px rgba(13,148,136,0.07);
+        }
+        .nav-brand { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+        .nav-logo {
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.3rem;
+            box-shadow: 0 4px 12px rgba(13,148,136,0.35);
+        }
+        .nav-brand-text h1 { font-size: 1.2rem; font-weight: 800; color: var(--secondary); line-height: 1; }
+        .nav-brand-text span { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
+        .nav-links { display: flex; align-items: center; gap: 0.25rem; list-style: none; }
+        .nav-links a {
+            padding: 0.55rem 1.1rem; border-radius: 999px;
+            font-weight: 500; font-size: 0.9rem; color: var(--text-muted);
+            text-decoration: none; transition: var(--transition);
+        }
+        .nav-links a:hover { color: var(--primary); background: var(--primary-light); }
+        .nav-actions { display: flex; gap: 0.75rem; align-items: center; }
+        .btn-nav-outline {
+            padding: 0.55rem 1.25rem; border: 1.5px solid var(--primary); border-radius: 999px;
+            color: var(--primary); font-weight: 600; font-size: 0.88rem;
+            text-decoration: none; cursor: pointer; background: transparent; transition: var(--transition);
+            display: inline-flex; align-items: center; gap: 0.4rem;
+        }
+        .btn-nav-outline:hover { background: var(--primary); color: white; }
+        .btn-nav-primary {
+            padding: 0.55rem 1.4rem; border-radius: 999px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white; font-weight: 600; font-size: 0.88rem;
+            text-decoration: none; border: none; cursor: pointer;
+            box-shadow: 0 4px 14px rgba(13,148,136,0.35); transition: var(--transition);
+            display: inline-flex; align-items: center; gap: 0.4rem;
+        }
+        .btn-nav-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(13,148,136,0.45); }
+
+        /* ===== HERO ===== */
+        .hero {
+            min-height: 100vh;
+            display: grid; grid-template-columns: 1fr 1fr;
+            align-items: center; padding: 7rem 5rem 4rem; gap: 4rem;
+            background: linear-gradient(135deg, #f0fdfa 0%, #ecfdf5 40%, #eff6ff 100%);
+            position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute;
+            width: 700px; height: 700px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(13,148,136,0.1) 0%, transparent 70%);
+            top: -200px; right: -100px; pointer-events: none;
+        }
+        .hero::after {
+            content: ''; position: absolute;
+            width: 500px; height: 500px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(99,102,241,0.07) 0%, transparent 70%);
+            bottom: -100px; left: -100px; pointer-events: none;
+        }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: var(--primary-light); color: var(--primary-hover);
+            font-size: 0.8rem; font-weight: 600; padding: 0.45rem 1.1rem;
+            border-radius: 999px; margin-bottom: 1.5rem;
+            border: 1px solid rgba(13,148,136,0.2);
+        }
+        .hero-title {
+            font-size: 3.5rem; font-weight: 900;
+            line-height: 1.1; color: var(--secondary); margin-bottom: 1.25rem;
+        }
+        .hero-title .highlight {
+            background: linear-gradient(135deg, var(--primary), var(--accent2));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .hero-desc { font-size: 1.05rem; color: var(--text-muted); line-height: 1.8; margin-bottom: 2.5rem; max-width: 500px; }
+        .hero-actions { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+        .btn-hero-primary {
+            display: inline-flex; align-items: center; gap: 0.6rem;
+            padding: 0.9rem 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white; border-radius: 999px; font-weight: 700; font-size: 1rem;
+            text-decoration: none; border: none; cursor: pointer;
+            box-shadow: 0 8px 24px rgba(13,148,136,0.4); transition: var(--transition);
+        }
+        .btn-hero-primary:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(13,148,136,0.5); }
+        .btn-hero-secondary {
+            display: inline-flex; align-items: center; gap: 0.6rem;
+            padding: 0.9rem 2rem; background: white; color: var(--text-main);
+            border-radius: 999px; font-weight: 600; font-size: 1rem;
+            text-decoration: none; border: 1.5px solid var(--border-color);
+            box-shadow: var(--shadow-sm); transition: var(--transition);
+        }
+        .btn-hero-secondary:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .hero-stats {
+            display: flex; gap: 2.5rem; margin-top: 3rem; padding-top: 2.5rem;
+            border-top: 1px solid rgba(13,148,136,0.15);
+        }
+        .hero-stat-num { font-size: 2rem; font-weight: 800; color: var(--primary); font-family: 'Outfit', sans-serif; }
+        .hero-stat-label { font-size: 0.78rem; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 0.2rem; }
+
+        /* Hero Booking Card */
+        .hero-card {
+            background: white; border-radius: var(--radius-xl); padding: 2.5rem;
+            box-shadow: var(--shadow-xl); border: 1px solid rgba(13,148,136,0.08);
+            position: relative; z-index: 1;
+        }
+        .hero-card-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 2rem; }
+        .hero-card-icon {
+            width: 46px; height: 46px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.3rem; box-shadow: 0 4px 12px rgba(13,148,136,0.3);
+        }
+        .hero-card h3 { font-size: 1.35rem; font-weight: 700; }
+        .hero-card > .hero-card-header + p, .hero-card p.subtext { font-size: 0.82rem; color: var(--text-muted); margin-top: 0.15rem; }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--secondary); margin-bottom: 0.45rem; }
+        .form-group label i { color: var(--primary); margin-right: 0.35rem; }
+        .form-control {
+            width: 100%; height: 46px; padding: 0 1rem;
+            border: 1.5px solid var(--border-color); border-radius: var(--radius-md);
+            font-size: 0.9rem; color: var(--text-main); background: #f8fafc;
+            transition: var(--transition); font-family: 'Inter', sans-serif;
+        }
+        .form-control:focus { outline: none; border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(13,148,136,0.1); }
+        .form-control::placeholder { color: #94a3b8; }
+        textarea.form-control { height: auto; padding: 0.8rem 1rem; resize: none; }
+        select.form-control { cursor: pointer; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .btn-book {
+            width: 100%; height: 52px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white; border: none; border-radius: var(--radius-md);
+            font-size: 1rem; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+            box-shadow: 0 6px 20px rgba(13,148,136,0.4); transition: var(--transition);
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-book:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(13,148,136,0.5); }
+        .btn-book:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+        .float-badge {
+            position: absolute; background: white; border-radius: 999px;
+            padding: 0.5rem 1rem; font-size: 0.78rem; font-weight: 600;
+            box-shadow: var(--shadow-md); display: flex; align-items: center; gap: 0.5rem;
+            border: 1px solid var(--border-color); animation: float 3s ease-in-out infinite;
+        }
+        .float-badge i { color: var(--primary); }
+        .float-badge-1 { top: -18px; right: 40px; animation-delay: 0s; }
+        .float-badge-2 { bottom: -18px; left: 30px; animation-delay: 1.5s; }
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+        /* ===== SECTIONS ===== */
+        .section { padding: 6rem 5rem; }
+        .section-alt { background: white; }
+        .section-header { text-align: center; margin-bottom: 4rem; }
+        .section-tag {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: var(--primary-light); color: var(--primary-hover);
+            padding: 0.4rem 1rem; border-radius: 999px;
+            font-size: 0.78rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem;
+        }
+        .section-title { font-size: 2.4rem; font-weight: 800; color: var(--secondary); margin-bottom: 1rem; }
+        .section-desc { font-size: 1rem; color: var(--text-muted); max-width: 560px; margin: 0 auto; line-height: 1.7; }
+
+        /* Services */
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.75rem; }
+        .service-card {
+            background: white; border-radius: var(--radius-lg); padding: 2rem;
+            border: 1.5px solid var(--border-color); box-shadow: var(--shadow-sm);
+            transition: var(--transition); position: relative; overflow: hidden;
+        }
+        .service-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transform: scaleX(0); transform-origin: left; transition: var(--transition);
+        }
+        .service-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-xl); border-color: rgba(13,148,136,0.2); }
+        .service-card:hover::before { transform: scaleX(1); }
+        .service-icon { width: 58px; height: 58px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin-bottom: 1.25rem; }
+        .service-card h4 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.6rem; }
+        .service-card p { font-size: 0.875rem; color: var(--text-muted); line-height: 1.6; }
+
+        /* Doctors */
+        .doctors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; }
+        .doctor-card {
+            background: white; border-radius: var(--radius-lg); overflow: hidden;
+            box-shadow: var(--shadow-md); border: 1px solid var(--border-color); transition: var(--transition);
+        }
+        .doctor-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-xl); }
+        .doctor-card-top {
+            background: linear-gradient(135deg, var(--secondary), #1e293b);
+            padding: 2rem 1.5rem 1.5rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .doctor-avatar {
+            width: 72px; height: 72px; border-radius: 50%;
+            background: rgba(255, 255, 255, 0.18); color: #ffffff;
+            backdrop-filter: blur(4px);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem; font-weight: 800;
+            flex-shrink: 0;
+            border: 3px solid rgba(255,255,255,0.35); font-family: 'Outfit', sans-serif;
+        }
+        .doctor-card-top h4 { color: white; font-size: 1.1rem; font-weight: 700; margin: 0; }
+        .spec-badge {
+            display: inline-flex; align-items: center; gap: 0.35rem;
+            background: rgba(13,148,136,0.3); color: #5eead4;
+            padding: 0.3rem 0.8rem; border-radius: 999px;
+            font-size: 0.75rem; font-weight: 600; margin: 0;
+        }
+        .doctor-card-body { padding: 1.5rem; }
+        .doctor-meta { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1.25rem; }
+        .doctor-meta-item { display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; color: var(--text-muted); }
+        .doctor-meta-item i { color: var(--primary); font-size: 1rem; width: 18px; }
+        .btn-book-doctor {
+            width: 100%; height: 42px;
+            background: var(--primary-light); color: var(--primary-hover);
+            border: 1.5px solid rgba(13,148,136,0.2); border-radius: var(--radius-md);
+            font-size: 0.88rem; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            transition: var(--transition); font-family: 'Inter', sans-serif;
+        }
+        .btn-book-doctor:hover { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 14px rgba(13,148,136,0.35); }
+
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-lg);
+        }
+        .skeleton-card { height: 260px; }
+        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+        /* Why Us */
+        .why-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; }
+        .why-card {
+            background: linear-gradient(135deg, var(--primary-light), #ecfdf5);
+            border: 1px solid rgba(13,148,136,0.15); border-radius: var(--radius-lg);
+            padding: 2rem 1.5rem; text-align: center; transition: var(--transition);
+        }
+        .why-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+        .why-icon {
+            width: 56px; height: 56px; border-radius: 16px; background: white;
+            box-shadow: var(--shadow-md); display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; color: var(--primary); margin: 0 auto 1.25rem;
+        }
+        .why-card h4 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .why-card p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; }
+
+        /* Admin Banner */
+        .admin-banner {
+            background: linear-gradient(135deg, var(--secondary) 0%, #1e293b 60%, #0f172a 100%);
+            padding: 5rem; text-align: center; position: relative; overflow: hidden;
+        }
+        .admin-banner::before {
+            content: ''; position: absolute; width: 600px; height: 600px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(13,148,136,0.15) 0%, transparent 70%);
+            top: -200px; left: 50%; transform: translateX(-50%);
+        }
+        .admin-banner-content { position: relative; z-index: 1; }
+        .admin-banner h2 { color: white; font-size: 2.2rem; font-weight: 800; margin-bottom: 1rem; }
+        .admin-banner p { color: #94a3b8; font-size: 1rem; max-width: 500px; margin: 0 auto 2.5rem; line-height: 1.7; }
+        .admin-links { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        .btn-admin {
+            display: inline-flex; align-items: center; gap: 0.6rem;
+            padding: 0.85rem 2rem; border-radius: var(--radius-md);
+            font-weight: 700; font-size: 0.95rem;
+            text-decoration: none; cursor: pointer; transition: var(--transition);
+        }
+        .btn-admin-primary {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white; border: none; box-shadow: 0 6px 20px rgba(13,148,136,0.4);
+        }
+        .btn-admin-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(13,148,136,0.5); }
+        .btn-admin-outline {
+            border: 1.5px solid rgba(255,255,255,0.25); color: white;
+            background: rgba(255,255,255,0.05);
+        }
+        .btn-admin-outline:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.4); transform: translateY(-2px); }
+
+        /* Footer */
+        .footer { background: #0a0f1e; padding: 3rem 5rem 2rem; color: #64748b; }
+        .footer-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2.5rem; gap: 2rem; flex-wrap: wrap; }
+        .footer-brand h4 { color: white; font-size: 1.1rem; font-weight: 800; margin-bottom: 0.5rem; font-family: 'Outfit', sans-serif; }
+        .footer-brand p { font-size: 0.82rem; line-height: 1.6; max-width: 260px; }
+        .footer-links h5 { color: white; font-size: 0.85rem; font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Outfit', sans-serif; }
+        .footer-links ul { list-style: none; }
+        .footer-links ul li { margin-bottom: 0.6rem; }
+        .footer-links ul li a { color: #64748b; font-size: 0.85rem; text-decoration: none; transition: color 0.2s; }
+        .footer-links ul li a:hover { color: var(--primary); }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.5rem; text-align: center; font-size: 0.8rem; }
+
+        /* Toast */
+        .toast-container { position: fixed; bottom: 2rem; right: 2rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.75rem; }
+        .toast {
+            display: flex; align-items: center; gap: 1rem;
+            background: white; border-radius: var(--radius-md); padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-xl); border-left: 4px solid var(--primary); min-width: 300px;
+            animation: toastIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .toast-success { border-left-color: #10b981; }
+        .toast-error { border-left-color: #ef4444; }
+        .toast i { font-size: 1.3rem; }
+        .toast-success i { color: #10b981; }
+        .toast-error i { color: #ef4444; }
+        .toast span { font-size: 0.88rem; font-weight: 500; flex-grow: 1; }
+        @keyframes toastIn { from{transform:translateX(120%);opacity:0} to{transform:translateX(0);opacity:1} }
+        @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero { grid-template-columns: 1fr; padding: 7rem 3rem 4rem; }
+            .hero-card { max-width: 560px; margin: 0 auto; }
+            .hero-title { font-size: 2.8rem; }
+        }
+        @media (max-width: 768px) {
+            .navbar { padding: 0 1.5rem; }
+            .nav-links { display: none; }
+            .section { padding: 4rem 1.5rem; }
+            .hero { padding: 7rem 1.5rem 3rem; }
+            .hero-title { font-size: 2.2rem; }
+            .admin-banner { padding: 3rem 1.5rem; }
+            .footer { padding: 3rem 1.5rem 1.5rem; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+
+        /* --- PRINT STYLE FOR PDF RECEIPTS --- */
+        @media print {
+            /* Hide all workspace items except the printable area */
+            body * {
+                visibility: hidden !important;
+            }
+            #receipt-print-template, #receipt-print-template * {
+                visibility: visible !important;
+            }
+            #receipt-print-template {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                display: block !important;
+                background: white !important;
+                color: black !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                font-size: 11pt;
+                line-height: 1.5;
+            }
+            /* Disable link styling, colors, etc in printing */
+            a[href]:after {
+                content: none !important;
+            }
+        }
+
+        /* Print Invoice Styling Helper Classes */
+        .invoice-print-header {
+            border-bottom: 3px double #000;
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .invoice-print-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #0d9488;
+        }
+        .invoice-print-logo i {
+            font-size: 2.5rem;
+        }
+        .invoice-print-logo-text h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin: 0;
+            line-height: 1;
+        }
+        .invoice-print-logo-text span {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .invoice-print-title {
+            text-align: right;
+        }
+        .invoice-print-title h2 {
+            font-size: 1.75rem;
+            font-weight: 900;
+            margin: 0 0 0.5rem 0;
+            color: #0f172a;
+        }
+        .invoice-print-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+        }
+        .invoice-print-block h3 {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 0.5rem;
+            margin: 0 0 0.75rem 0;
+        }
+        .invoice-print-block p {
+            margin: 0.35rem 0;
+            font-size: 0.9rem;
+        }
+        .invoice-print-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2.5rem;
+        }
+        .invoice-print-table th {
+            background-color: #f1f5f9;
+            border-bottom: 2px solid #ccc;
+            padding: 0.75rem;
+            font-weight: 700;
+            text-align: left;
+        }
+        .invoice-print-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .invoice-print-summary {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 3rem;
+        }
+        .invoice-print-summary-table {
+            width: 320px;
+            border-collapse: collapse;
+        }
+        .invoice-print-summary-table td {
+            padding: 0.5rem 0.75rem;
+            text-align: right;
+        }
+        .invoice-print-summary-table tr.total-row td {
+            border-top: 2px solid #000;
+            font-size: 1.2rem;
+            font-weight: 800;
+        }
+        .invoice-print-footer {
+            border-top: 1px dashed #ccc;
+            padding-top: 1.5rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== PAGE LOADER ===== -->
+    <div id="page-loader">
+        <div class="loader-img-wrap">
+            <img src="hospital-building.jpg" alt="Thakre Hospital Building">
+        </div>
+        <div class="loader-brand">
+            <h2>Thakre Hospital</h2>
+            <p>Multispeciality &amp; MedCare</p>
+        </div>
+
+        <!-- CTA button shown first -->
+        <button class="loader-cta-btn" id="loader-start-btn" onclick="startLoader()">
+            <i class="ri-calendar-add-line"></i> Book Appointment
+        </button>
+
+        <!-- Progress shown only after button click -->
+        <div id="loader-progress">
+            <p class="loader-loading-label">Loading your portal...</p>
+            <div class="loader-bar-wrap">
+                <div class="loader-bar" id="loader-bar"></div>
+            </div>
+            <div class="loader-dots">
+                <div class="loader-dot"></div>
+                <div class="loader-dot"></div>
+                <div class="loader-dot"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="#home" class="nav-brand">
+            <div class="nav-logo"><i class="ri-heart-pulse-fill"></i></div>
+            <div class="nav-brand-text">
+                <h1>THAKRE</h1>
+                <span>Multispeciality Hospital</span>
+            </div>
+        </a>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#doctors">Doctors</a></li>
+            <li><a href="#booking">Book Appointment</a></li>
+            <li><a href="#billing-hub">Invoices</a></li>
+        </ul>
+        <div class="nav-actions">
+            <a href="index.html" class="btn-nav-outline" style="display:inline-flex;align-items:center;gap:0.5rem;font-weight:700;border:2px solid var(--primary);color:var(--primary);padding:0.5rem 1.1rem;border-radius:8px;text-decoration:none;font-size:0.84rem;transition:all 0.2s;" onmouseover="this.style.background='var(--primary)';this.style.color='white';" onmouseout="this.style.background='';this.style.color='var(--primary)';"><i class="ri-settings-4-line"></i> Management Portal</a>
+            <a href="#booking" class="btn-nav-primary"><i class="ri-calendar-check-line"></i> Book Now</a>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section id="home" class="hero">
+        <div class="hero-left">
+            <div class="hero-badge"><i class="ri-award-fill"></i> Trusted Healthcare Since 2010</div>
+            <h1 class="hero-title">Your Health,<br>Our <span class="highlight">Priority</span></h1>
+            <p class="hero-desc">Experience world-class healthcare at Thakre Multispeciality Hospital. Book appointments, consult expert doctors, and get personalized care — all in one place.</p>
+            <div class="hero-actions">
+                <a href="#booking" class="btn-hero-primary"><i class="ri-calendar-add-line"></i> Book Appointment</a>
+                <a href="#doctors" class="btn-hero-secondary"><i class="ri-stethoscope-line"></i> Find Doctors</a>
+            </div>
+            <div class="hero-stats">
+                <div>
+                    <div class="hero-stat-num" id="hero-patients">—</div>
+                    <div class="hero-stat-label">Patients Served</div>
+                </div>
+                <div>
+                    <div class="hero-stat-num" id="hero-doctors">—</div>
+                    <div class="hero-stat-label">Expert Doctors</div>
+                </div>
+                <div>
+                    <div class="hero-stat-num">24/7</div>
+                    <div class="hero-stat-label">Emergency Care</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-right">
+            <div class="hero-card" id="booking">
+                <div class="float-badge float-badge-1"><i class="ri-shield-check-fill"></i> Verified Doctors</div>
+                <div class="float-badge float-badge-2"><i class="ri-time-fill"></i> Instant Confirmation</div>
+                <div class="hero-card-header">
+                    <div class="hero-card-icon"><i class="ri-calendar-event-fill"></i></div>
+                    <div>
+                        <h3>Book Appointment</h3>
+                        <p style="font-size:0.82rem;color:var(--text-muted)">Fill in your details below</p>
+                    </div>
+                </div>
+                <form id="booking-form" novalidate>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="ri-user-line"></i>Full Name *</label>
+                            <input type="text" id="book-name" class="form-control" placeholder="Your full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="ri-phone-line"></i>Phone *</label>
+                            <input type="text" id="book-phone" class="form-control" placeholder="9876543210" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="ri-mail-line"></i>Email</label>
+                            <input type="email" id="book-email" class="form-control" placeholder="you@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="ri-calendar-line"></i>Preferred Date *</label>
+                            <input type="datetime-local" id="book-date" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="ri-stethoscope-line"></i>Choose Doctor *</label>
+                        <select id="book-doctor" class="form-control" required>
+                            <option value="">-- Loading doctors... --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="ri-hotel-bed-line"></i>Request Room/Bed Admission</label>
+                        <select id="book-bed-type" class="form-control">
+                            <option value="NONE" selected>None (Outpatient Consultation)</option>
+                            <option value="General Ward">General Ward (RS 1200 / Day)</option>
+                            <option value="Semi-Private">Semi-Private (RS 2200 / Day)</option>
+                            <option value="Deluxe Room">Deluxe Room (RS 10000 / Day)</option>
+                            <option value="ICU">ICU (RS 6000 / Day)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="ri-heart-pulse-line"></i>Symptoms / Notes</label>
+                        <textarea id="book-symptoms" class="form-control" rows="3" placeholder="Briefly describe your symptoms..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-book" id="submit-btn">
+                        <i class="ri-send-plane-fill"></i> Confirm Appointment
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOSPITAL IMAGE STRIP -->
+    <div class="hospital-img-section">
+        <img src="hospital-building.jpg" alt="Thakre Hospital Building — Nagpur">
+        <div class="hospital-img-overlay">
+            <div class="hospital-img-text">
+                <h2>Welcome to<br>Thakre Hospital</h2>
+                <p>A state-of-the-art medical facility committed to delivering exceptional healthcare with compassion and cutting-edge technology.</p>
+                <div class="hospital-img-badges">
+                    <span class="img-badge"><i class="ri-building-2-line"></i> Nagpur, Maharashtra</span>
+                    <span class="img-badge"><i class="ri-award-line"></i> NABH Accredited</span>
+                    <span class="img-badge"><i class="ri-time-line"></i> Open 24/7</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SERVICES -->
+    <section id="services" class="section section-alt">
+        <div class="section-header">
+            <div class="section-tag"><i class="ri-hospital-line"></i> Our Specialities</div>
+            <h2 class="section-title">Comprehensive Medical Services</h2>
+            <p class="section-desc">From routine check-ups to complex procedures, we offer a wide range of medical specialities under one roof.</p>
+        </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon" style="background:#eff6ff;color:#3b82f6">❤️</div>
+                <h4>Cardiology</h4>
+                <p>Advanced cardiac care with ECG, echocardiography, and heart surgery facilities for all cardiac conditions.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon" style="background:#fdf4ff;color:#a855f7">🧠</div>
+                <h4>Neurology</h4>
+                <p>Expert diagnosis and treatment for neurological disorders including stroke, epilepsy, and migraine.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon" style="background:#ecfdf5;color:#10b981">🦴</div>
+                <h4>Orthopaedics</h4>
+                <p>Comprehensive bone, joint, and spine care including joint replacement and physiotherapy.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon" style="background:#fff7ed;color:#f97316">👶</div>
+                <h4>Paediatrics</h4>
+                <p>Dedicated children's care from newborn to adolescent with specialist paediatricians.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon" style="background:#fef2f2;color:#ef4444">🔬</div>
+                <h4>Oncology</h4>
+                <p>Modern cancer treatment with chemotherapy, radiation therapy, and surgical oncology.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon" style="background:#f0fdf4;color:#22c55e">🦷</div>
+                <h4>Dental Care</h4>
+                <p>Full-service dentistry including implants, braces, root canals, and cosmetic dentistry.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon" style="background:#fefce8;color:#eab308">👁️</div>
+                <h4>Ophthalmology</h4>
+                <p>Complete eye care services including LASIK surgery, cataract removal, and retinal treatments.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon" style="background:#f0fdfa;color:#14b8a6">🩺</div>
+                <h4>General Medicine</h4>
+                <p>Primary care for everyday health needs, preventive care, and chronic disease management.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- DOCTORS -->
+    <section id="doctors" class="section">
+        <div class="section-header">
+            <div class="section-tag"><i class="ri-stethoscope-line"></i> Our Team</div>
+            <h2 class="section-title">Meet Our Expert Doctors</h2>
+            <p class="section-desc">Our team of experienced, board-certified specialists is dedicated to providing you the best healthcare.</p>
+        </div>
+        <div id="doctors-grid" class="doctors-grid">
+            <div class="skeleton skeleton-card"></div>
+            <div class="skeleton skeleton-card"></div>
+            <div class="skeleton skeleton-card"></div>
+        </div>
+    </section>
+
+    <!-- WHY US -->
+    <section class="section section-alt">
+        <div class="section-header">
+            <div class="section-tag"><i class="ri-star-fill"></i> Why Thakre</div>
+            <h2 class="section-title">Why Choose Us?</h2>
+            <p class="section-desc">We are committed to delivering exceptional care with compassion and cutting-edge medical technology.</p>
+        </div>
+        <div class="why-grid">
+            <div class="why-card"><div class="why-icon"><i class="ri-shield-check-line"></i></div><h4>Trusted & Certified</h4><p>All our doctors are board-certified with years of experience in their specialities.</p></div>
+            <div class="why-card"><div class="why-icon"><i class="ri-microscope-line"></i></div><h4>Advanced Technology</h4><p>State-of-the-art diagnostic equipment ensures accurate diagnosis and effective treatment.</p></div>
+            <div class="why-card"><div class="why-icon"><i class="ri-heart-3-line"></i></div><h4>Patient-Centered Care</h4><p>We put your comfort first, with personalized care plans for every patient.</p></div>
+            <div class="why-card"><div class="why-icon"><i class="ri-time-line"></i></div><h4>24/7 Emergency</h4><p>Round-the-clock emergency services with rapid response teams available at all times.</p></div>
+            <div class="why-card"><div class="why-icon"><i class="ri-map-pin-line"></i></div><h4>Easy Access</h4><p>Conveniently located with ample parking and fully accessible facilities for all patients.</p></div>
+            <div class="why-card"><div class="why-icon"><i class="ri-wallet-3-line"></i></div><h4>Affordable Care</h4><p>Transparent pricing and insurance-friendly billing with flexible payment options.</p></div>
+        </div>
+    </section>
+
+    <!-- FEEDBACK SECTION -->
+    <section id="feedback" class="section">
+        <div class="section-header">
+            <div class="section-tag"><i class="ri-feedback-line"></i> Patient Feedback</div>
+            <h2 class="section-title">We Value Your Experience</h2>
+            <p class="section-desc">Share your feedback to help us improve our healthcare services.</p>
+        </div>
+        <div style="max-width: 650px; margin: 0 auto; background: var(--bg-card); padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); border: 1px solid var(--border-color);">
+            <form id="feedback-form" onsubmit="submitFeedback(event)" style="display: flex; flex-direction: column; gap: 1rem;">
+                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div><label style="font-weight:600;font-size:0.9rem">Name*</label><input type="text" id="feedback-name" required style="width:100%;padding:0.75rem;border-radius:var(--radius-sm);border:1px solid var(--border-color)"></div>
+                    <div><label style="font-weight:600;font-size:0.9rem">Email</label><input type="email" id="feedback-email" style="width:100%;padding:0.75rem;border-radius:var(--radius-sm);border:1px solid var(--border-color)"></div>
+                </div>
+                <div>
+                    <label style="font-weight:600;font-size:0.9rem">Category*</label>
+                    <select id="feedback-category" required style="width:100%;padding:0.75rem;border-radius:var(--radius-sm);border:1px solid var(--border-color)">
+                        <option value="DOCTOR">Doctor Consultation</option>
+                        <option value="NURSE">Nursing & Care</option>
+                        <option value="FACILITY">Hospital Facilities</option>
+                        <option value="BILLING">Billing & Insurance</option>
+                        <option value="GENERAL">General Experience</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-weight:600;font-size:0.9rem;display:block;margin-bottom:0.5rem">Rating*</label>
+                    <div class="star-rating" id="feedback-rating" style="display:flex;gap:0.5rem;font-size:1.5rem;color:var(--text-muted);cursor:pointer">
+                        <i class="ri-star-fill active" data-val="1" style="color:#f59e0b"></i><i class="ri-star-fill active" data-val="2" style="color:#f59e0b"></i><i class="ri-star-fill active" data-val="3" style="color:#f59e0b"></i><i class="ri-star-fill active" data-val="4" style="color:#f59e0b"></i><i class="ri-star-fill active" data-val="5" style="color:#f59e0b"></i>
+                    </div>
+                </div>
+                <div>
+                    <label style="font-weight:600;font-size:0.9rem">Your Message*</label>
+                    <textarea id="feedback-message" required rows="4" style="width:100%;padding:0.75rem;border-radius:var(--radius-sm);border:1px solid var(--border-color)"></textarea>
+                </div>
+                <button type="submit" class="btn-nav-primary" style="padding:1rem;font-weight:700;border:none;border-radius:var(--radius-md);cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--primary-hover));color:white"><i class="ri-send-plane-fill"></i> Submit Feedback</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- ADMIN BANNER -->
+    <section class="admin-banner">
+        <div class="admin-banner-content">
+            <h2>Hospital Staff? Access the Management Portal</h2>
+            <p>Coordinators and admin staff can manage patients, doctors, appointments, and billing from the central dashboard.</p>
+            <div class="admin-links">
+                <a href="index.html" class="btn-admin btn-admin-primary"><i class="ri-dashboard-fill"></i> Open Management Dashboard</a>
+                <a href="/h2-console" target="_blank" class="btn-admin btn-admin-outline"><i class="ri-database-2-line"></i> SQL Admin Console</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- BILLING HUB -->
+    <section id="billing-hub" class="section section-alt">
+        <div class="section-header">
+            <div class="section-tag"><i class="ri-bank-card-2-line"></i> Billing & Payments</div>
+            <h2 class="section-title">Invoices & Receipts Hub</h2>
+            <p class="section-desc">Search your medical files, retrieve invoice history, process online payments, and download official receipts instantly.</p>
+        </div>
+
+        <div style="max-width: 650px; margin: 0 auto 3rem; text-align: center;">
+            <div style="background: white; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 1.25rem;">
+                <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--secondary); display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin: 0;"><i class="ri-search-eye-line" style="color: var(--primary);"></i> Access Your Billing Records</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0 0 0.5rem 0;">Enter your Patient ID (which was shown when you booked your appointment) to load bills.</p>
+                <form id="patient-search-billing-form" onsubmit="searchPatientBills(event)" style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin: 0;">
+                    <div style="flex-grow: 1; min-width: 250px; position: relative;">
+                        <i class="ri-user-search-line" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); z-index: 2; pointer-events: none;"></i>
+                        <input type="number" id="patient-billing-id" placeholder="Enter Patient ID (e.g. 1, 2)" required style="width: 100%; height: 46px; padding: 0.5rem 1rem 0.5rem 2.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 0.95rem;">
+                    </div>
+                    <button type="submit" class="btn-nav-primary" style="height: 46px; padding: 0 1.5rem; border-radius: var(--radius-md); font-size: 0.9rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; border: none; outline: none;">
+                        <i class="ri-search-line"></i> Retrieve Invoices
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Invoices List Container -->
+        <div id="patient-bills-results" style="max-width: 900px; margin: 0 auto;">
+            <div style="text-align: center; color: var(--text-muted); padding: 3rem 2rem; border: 2px dashed var(--border-color); border-radius: var(--radius-lg); background-color: rgba(255, 255, 255, 0.5);">
+                <i class="ri-file-list-3-line" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem; display: block;"></i>
+                <p>No records queried. Please enter your Patient ID above to view details.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <h4>🏥 THAKRE Multispeciality Hospital</h4>
+                <p>Providing compassionate, world-class healthcare to our community since 2010.</p>
+            </div>
+            <div class="footer-links">
+                <h5>Quick Links</h5>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#doctors">Doctors</a></li>
+                    <li><a href="#booking">Book Appointment</a></li>
+                    <li><a href="#billing-hub">Invoices & Payments</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h5>Management</h5>
+                <ul>
+                    <li><a href="index.html">Admin Dashboard</a></li>
+                    <li><a href="/h2-console" target="_blank">SQL Console</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h5>Location</h5>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d119066.41709477062!2d78.96288!3d21.16108!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bd4c0a5a31faf13%3A0x19b37d06d0bb3e2b!2sNagpur%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" width="100%" height="150" style="border:0; border-radius:8px;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+            <div class="footer-links">
+                <h5>Contact</h5>
+                <ul>
+                    <li><a href="#">📍 Nagpur, Maharashtra</a></li>
+                    <li><a href="#">📞 +91 712 000 0000</a></li>
+                    <li><a href="#">✉️ info@thakrehospital.in</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div style="margin-bottom: 1.5rem; line-height: 1.6; max-width: 800px; margin-left: auto; margin-right: auto; text-align: center; color: #94a3b8;">
+                <p style="margin-bottom: 0.5rem; font-weight: 500;">Thakre Multispeciality Hospital is a Final Year CSE demo project developed by Mrunal Thakre for academic and portfolio purposes. This website does not represent a real hospital or healthcare provider in Nagpur or elsewhere.</p>
+                <p style="margin-bottom: 0.5rem;">Need a website or web application for your business? We build solutions for Healthcare, E-commerce, Restaurants & Hotels, Real Estate, Travel & Tourism, and more.</p>
+                <p style="font-weight: 600;">📧 Contact: <a href="mailto:thakrem139@gmail.com" style="color: #5eead4; text-decoration: underline;">thakrem139@gmail.com</a></p>
+            </div>
+            <p>© 2026 Thakre Multispeciality Hospital. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Process Invoice Payment Modal -->
+    <div id="pay-invoice-modal" class="modal-overlay" style="position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 10000; padding: 1rem;">
+        <div class="modal" style="background: white; border-radius: var(--radius-lg); width: 100%; max-width: 450px; overflow: hidden; box-shadow: var(--shadow-xl); border: 1px solid var(--border-color); display: flex; flex-direction: column;">
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-color);">
+                <h3 style="font-family: 'Outfit'; font-size: 1.25rem; font-weight: 700; margin: 0;">Online Invoice Payment</h3>
+                <button class="close-btn" onclick="closeModal('pay-invoice-modal')" style="border: none; background: transparent; font-size: 1.5rem; cursor: pointer; color: var(--text-muted);">&times;</button>
+            </div>
+            <form id="pay-invoice-form" onsubmit="submitInvoicePayment(event)">
+                <div class="modal-body" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; max-height: 70vh; overflow-y: auto;">
+                    <input type="hidden" id="pay-bill-id">
+                    <div style="margin-bottom: 1rem; text-align: center;">
+                        <h4 style="font-size: 0.82rem; color: var(--text-muted); text-transform: uppercase; margin: 0 0 0.25rem 0;">Amount Due</h4>
+                        <strong id="pay-invoice-amount" style="font-size: 2rem; color: var(--primary); font-family: 'Outfit';">RS 0.00</strong>
+                        <p id="pay-invoice-gst-breakdown" style="font-size: 0.8rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">(Base: RS 0.00 + GST: RS 0.00)</p>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+                        <label for="payment-method-select" style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);">Select Payment Method*</label>
+                        <select id="payment-method-select" required onchange="togglePaymentFields()" style="width: 100%; height: 42px; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0 0.75rem; background-color: white; font-size: 0.9rem;">
+                            <option value="UPI">UPI (QR Code / VPA)</option>
+                            <option value="CARD">Debit / Credit Card</option>
+                            <option value="CASH">Cash Payment</option>
+                        </select>
+                    </div>
+
+                    <!-- UPI Dynamic View -->
+                    <div id="payment-upi-view" class="payment-method-view" style="display: flex; flex-direction: column; align-items: center; gap: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem; background-color: var(--bg-main); margin-top: 0.5rem;">
+                        <div id="upi-qrcode" style="width: 200px; height: 200px; background-color: white; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 10px; border-radius: var(--radius-md); box-shadow: var(--shadow-sm);">
+                            <img src="upi-qr.jpg" alt="SBI UPI QR Code" style="width: 100%; height: 100%; object-fit: contain; border-radius: 4px;">
+                        </div>
+                        <div style="text-align: center; margin: 0.25rem 0;">
+                            <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-main); display: block;">UPI ID: 8767323603@ibl</span>
+                            <span style="font-size: 0.72rem; color: var(--primary); font-weight: 700; display: block; margin-top: 0.15rem;"><i class="ri-flashlight-line"></i> Amount pre-filled automatically</span>
+                        </div>
+                        <p style="font-size: 0.72rem; text-align: center; color: var(--text-muted); margin: 0;">Scan QR using GPay, PhonePe, Paytm, or BHIM.</p>
+                        <div style="width: 100%; display: flex; flex-direction: column; gap: 0.35rem;">
+                            <label for="upi-txn-id" style="font-size: 0.85rem; font-weight: 600;">UPI Reference Transaction ID*</label>
+                            <input type="text" id="upi-txn-id" placeholder="e.g. 398289192931" required style="width: 100%; height: 42px; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0 1rem; font-size: 0.9rem;">
+                        </div>
+                    </div>
+
+                    <!-- Card Dynamic View -->
+                    <div id="payment-card-view" class="payment-method-view" style="display: none; flex-direction: column; gap: 1rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem; margin-top: 0.5rem;">
+                        <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+                            <label for="card-number" style="font-size: 0.85rem; font-weight: 600;">Card Number*</label>
+                            <div style="position: relative;">
+                                <input type="text" id="card-number" placeholder="4111 2222 3333 4444" maxlength="19" required style="width: 100%; height: 42px; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0 2.5rem 0 1rem; font-size: 0.9rem;">
+                                <i class="ri-bank-card-line" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+                                <label for="card-expiry" style="font-size: 0.85rem; font-weight: 600;">Expiry Date*</label>
+                                <input type="text" id="card-expiry" placeholder="MM/YY" maxlength="5" required style="width: 100%; height: 42px; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0 1rem; font-size: 0.9rem;">
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+                                <label for="card-cvv" style="font-size: 0.85rem; font-weight: 600;">CVV*</label>
+                                <input type="password" id="card-cvv" placeholder="123" maxlength="3" required style="width: 100%; height: 42px; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0 1rem; font-size: 0.9rem;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cash Dynamic View -->
+                    <div id="payment-cash-view" class="payment-method-view" style="display: none; flex-direction: column; gap: 0.5rem; border: 1px solid #fef08a; border-radius: var(--radius-md); padding: 1.25rem; background-color: #fef08a; color: #713f12; margin-top: 0.5rem;">
+                        <p style="font-size: 0.8rem; font-weight: 600; margin: 0;"><i class="ri-information-line"></i> Verify cash payment is handed to counter operator at discharge desk.</p>
+                        <div style="width: 100%; display: flex; flex-direction: column; gap: 0.35rem; color: var(--text-main); margin-top: 0.5rem;">
+                            <label for="cash-drawer-receipt" style="color: #713f12; font-size: 0.85rem; font-weight: 600;">Cash Drawer Receipt No.*</label>
+                            <input type="text" id="cash-receipt-no" placeholder="e.g. CSH-82910" required style="width: 100%; height: 42px; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0 1rem; font-size: 0.9rem;">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 0.75rem; padding: 1.25rem 1.5rem; border-top: 1px solid var(--border-color);">
+                    <button type="button" class="btn-nav-outline" onclick="closeModal('pay-invoice-modal')" style="border-radius: var(--radius-md); padding: 0.55rem 1.25rem;">Cancel</button>
+                    <button type="submit" class="btn-nav-primary" style="border: none; border-radius: var(--radius-md); padding: 0.55rem 1.4rem;">Confirm & Pay</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Printable Invoice Template -->
+    <div id="receipt-print-template" style="display: none;"></div>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <script>
+        const API_DOCTORS = '/api/doctors';
+        const API_PATIENTS = '/api/patients';
+        const API_APPOINTMENTS = '/api/appointments';
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            const icon = type === 'success' ? 'ri-checkbox-circle-fill' : 'ri-error-warning-fill';
+            toast.innerHTML = `<i class="${icon}"></i><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 350);
+            }, 5000);
+        }
+
+        function getInitials(name = '') {
+            // Strip leading Dr. prefix before computing initials
+            const clean = name.replace(/^Dr\.?\s*/i, '');
+            return clean.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
+        }
+
+        async function loadDoctors() {
+            const grid = document.getElementById('doctors-grid');
+            const select = document.getElementById('book-doctor');
+            try {
+                const res = await fetch(API_DOCTORS);
+                const doctors = await res.json();
+
+                select.innerHTML = '<option value="">-- Select a Doctor --</option>';
+                doctors.forEach(d => {
+                    const opt = document.createElement('option');
+                    opt.value = d.id;
+                    opt.textContent = `Dr. ${d.name} — ${d.specialization || 'General'}`;
+                    select.appendChild(opt);
+                });
+
+                if (doctors.length === 0) {
+                    grid.innerHTML = `<p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:2rem;">No doctors found. Add doctors via the admin dashboard.</p>`;
+                    return;
+                }
+
+                grid.innerHTML = doctors.map(d => {
+                    // Strip existing Dr. prefix to avoid "Dr. Dr."
+                    const cleanName = d.name ? d.name.replace(/^Dr\.?\s*/i, '') : '';
+                    let photoUrl = '';
+                    if (d.photoBase64) {
+                        photoUrl = d.photoBase64;
+                    } else {
+                        const nameLower = cleanName.toLowerCase();
+                        if (nameLower.includes('sarah')) {
+                            photoUrl = 'dr-sarah.png';
+                        } else if (nameLower.includes('robert')) {
+                            photoUrl = 'dr-robert.png';
+                        } else if (nameLower.includes('emily')) {
+                            photoUrl = 'dr-emily.png';
+                        } else if (nameLower.includes('james')) {
+                            photoUrl = 'dr-james.png';
+                        }
+                    }
+
+                    return `
+                    <div class="doctor-card">
+                        <div class="doctor-card-top">
+                            ${photoUrl ? `<div class="doctor-photo-frame" style="width: 120px; height: 145px; border-radius: var(--radius-md); overflow: hidden; border: 2.5px solid rgba(255, 255, 255, 0.15); margin: 0 auto 0.75rem; box-shadow: var(--shadow-sm);"><img src="${photoUrl}" alt="${cleanName}" style="width: 100%; height: 100%; object-fit: cover;"></div>` : `<div class="doctor-photo-frame" style="width: 120px; height: 145px; border-radius: var(--radius-md); overflow: hidden; border: 2.5px solid rgba(255, 255, 255, 0.15); margin: 0 auto 0.75rem; box-shadow: var(--shadow-sm); display: flex; align-items: center; justify-content: center; background-color: rgba(0,0,0,0.05);"><i class="ri-user-line" style="font-size: 4rem; color: var(--text-muted);"></i></div>`}
+                            <h4>Dr. ${cleanName}</h4>
+                            <span class="spec-badge"><i class="ri-stethoscope-line"></i> ${d.specialization || 'General Medicine'}</span>
+                        </div>
+                        <div class="doctor-card-body">
+                            <div class="doctor-meta">
+                                ${d.email ? `<div class="doctor-meta-item"><i class="ri-mail-line"></i>${d.email}</div>` : ''}
+                                ${d.phone ? `<div class="doctor-meta-item"><i class="ri-phone-line"></i>${d.phone}</div>` : ''}
+                                ${d.experience ? `<div class="doctor-meta-item"><i class="ri-award-line"></i>${d.experience} yrs experience</div>` : ''}
+                            </div>
+                            <button class="btn-book-doctor" onclick="scrollToBooking(${d.id})">
+                                <i class="ri-calendar-add-line"></i> Book Appointment
+                            </button>
+                        </div>
+                    </div>`;
+                }).join('');
+
+                document.getElementById('hero-doctors').textContent = doctors.length + '+';
+            } catch (err) {
+                grid.innerHTML = `<p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:2rem;">Could not load doctors. Make sure the server is running at localhost:8080.</p>`;
+                select.innerHTML = '<option value="">-- Server unavailable --</option>';
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const res = await fetch(API_PATIENTS);
+                const patients = await res.json();
+                document.getElementById('hero-patients').textContent = patients.length + '+';
+            } catch { /* silently ignore */ }
+        }
+
+        function scrollToBooking(doctorId) {
+            document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
+            if (doctorId) {
+                setTimeout(() => { document.getElementById('book-doctor').value = doctorId; }, 450);
+            }
+        }
+
+        async function handleBookingSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('book-name').value.trim();
+            const phone = document.getElementById('book-phone').value.trim();
+            const email = document.getElementById('book-email').value.trim();
+            const date = document.getElementById('book-date').value;
+            const doctorId = document.getElementById('book-doctor').value;
+            const symptoms = document.getElementById('book-symptoms').value.trim();
+
+            if (!name || !phone || !date || !doctorId) {
+                showToast('Please fill in all required fields (*).', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="ri-loader-4-line" style="animation:spin 1s linear infinite"></i> Processing...';
+
+            try {
+                const patientRes = await fetch(API_PATIENTS, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, contactNumber: phone, email: email || null, address: 'Registered via Patient Portal' })
+                });
+                if (!patientRes.ok) throw new Error('Could not register patient');
+                const patient = await patientRes.json();
+
+                const apptRes = await fetch(API_APPOINTMENTS, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        patient: { id: patient.id },
+                        doctor:  { id: parseInt(doctorId) },
+                        appointmentDate: date.length === 16 ? date + ':00' : date,
+                        symptoms: symptoms || 'No symptoms provided',
+                        status: 'SCHEDULED'
+                    })
+                });
+                if (!apptRes.ok) {
+                    const errText = await apptRes.text();
+                    throw new Error('Could not book appointment: ' + errText);
+                }
+
+                // Bed Admission Request Check
+                const selectedBedType = document.getElementById('book-bed-type').value;
+                let bedMessage = '';
+                if (selectedBedType !== 'NONE') {
+                    try {
+                        const bedsRes = await fetch('/api/beds');
+                        if (bedsRes.ok) {
+                            const beds = await bedsRes.json();
+                            const availableBed = beds.find(b => b.status === 'AVAILABLE' && b.roomType === selectedBedType);
+                            if (availableBed) {
+                                // Assign Patient to Bed
+                                const assignRes = await fetch(`/api/beds/${availableBed.id}/assign`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ patientId: patient.id })
+                                });
+                                if (assignRes.ok) {
+                                    bedMessage = ` Bed ${availableBed.bedNumber} (${availableBed.roomType}) has been reserved for your stay.`;
+                                }
+                            } else {
+                                bedMessage = ` Note: Requested ${selectedBedType} is currently full; you are placed on the admission waitlist.`;
+                            }
+                        }
+                    } catch (bedErr) {
+                        console.error('Error reserving bed:', bedErr);
+                    }
+                }
+
+                showToast(`Appointment confirmed for ${name}!${bedMessage}`);
+                document.getElementById('booking-form').reset();
+                loadStats();
+            } catch (err) {
+                showToast('Booking failed: ' + err.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="ri-send-plane-fill"></i> Confirm Appointment';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const now = new Date();
+            const pad = n => String(n).padStart(2, '0');
+            document.getElementById('book-date').min = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+            loadDoctors();
+            loadStats();
+            document.getElementById('booking-form').addEventListener('submit', handleBookingSubmit);
+        });
+
+        function startLoader() {
+            // Hide the button
+            document.getElementById('loader-start-btn').style.display = 'none';
+            // Show progress area
+            const progress = document.getElementById('loader-progress');
+            progress.classList.add('started');
+            // Start bar animation
+            document.getElementById('loader-bar').classList.add('animating');
+            // Dismiss loader after 8 seconds
+            setTimeout(() => {
+                document.getElementById('page-loader').classList.add('hidden');
+                // Scroll to booking section smoothly
+                setTimeout(() => {
+                    document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
+                }, 700);
+            }, 8000);
+        }
+
+        // --- ADVANCED INVOICING & PAYMENTS HUB ---
+        const API_BILLS = '/api/bills';
+
+        async function searchPatientBills(e) {
+            if (e) e.preventDefault();
+            const patientId = document.getElementById('patient-billing-id').value;
+            const container = document.getElementById('patient-bills-results');
+            container.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-muted);"><i class="ri-loader-4-line" style="font-size:2rem;animation:spin 1s linear infinite;display:block;margin:0 auto 0.5rem;"></i>Searching billing records...</div>';
+
+            try {
+                const res = await fetch(`/api/bills/patient/${patientId}`);
+                if (!res.ok) throw new Error();
+                const bills = await res.json();
+
+                if (bills.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; color: var(--text-muted); padding: 3rem 2rem; border: 2px dashed var(--border-color); border-radius: var(--radius-lg); background-color: rgba(255, 255, 255, 0.5);">
+                            <i class="ri-checkbox-circle-line" style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem; display: block;"></i>
+                            <p>No billing invoices found for Patient ID: ${patientId}. All accounts are clear!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Render invoices
+                container.innerHTML = bills.map(bill => {
+                    const statusClass = bill.status.toLowerCase();
+                    const statusLabel = bill.status === 'PAID' ? 'Paid' : 'Unpaid (Pending)';
+                    
+                    let actionButton = '';
+                    let paymentDetailsHTML = '';
+
+                    if (bill.status === 'UNPAID') {
+                        actionButton = `
+                            <button class="btn-nav-primary" onclick="openPayInvoiceModal(${bill.id})" style="border: none; font-size: 0.82rem; padding: 0.5rem 1rem; font-weight: 700;">
+                                <i class="ri-wallet-3-line"></i> Pay Now
+                            </button>
+                        `;
+                    } else {
+                        actionButton = `
+                            <button class="btn-nav-outline" onclick="printInvoiceReceipt(${bill.id})" style="font-size: 0.82rem; padding: 0.5rem 1rem; font-weight: 700;">
+                                <i class="ri-download-cloud-line"></i> Download Receipt
+                            </button>
+                        `;
+                        paymentDetailsHTML = `
+                            <div style="margin-top: 0.75rem; font-size: 0.8rem; color: var(--text-muted); border-top: 1px dashed var(--border-color); padding-top: 0.5rem; display: flex; flex-direction: column; gap: 0.25rem;">
+                                <span><i class="ri-bank-card-line"></i> Payment Method: <strong>${bill.paymentMethod}</strong></span>
+                                <span><i class="ri-key-line"></i> Reference Transaction ID: <strong>${bill.transactionId}</strong></span>
+                                <span><i class="ri-calendar-check-line"></i> Paid Date: <strong>${bill.paymentDate}</strong></span>
+                            </div>
+                        `;
+                    }
+
+                    return `
+                        <div style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.25rem; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 0.75rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem;">
+                                <div>
+                                    <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Invoice ID: #${bill.id}</span>
+                                    <h4 style="font-size: 1.1rem; font-weight: 800; color: var(--secondary); margin: 0.25rem 0;">${bill.services}</h4>
+                                    <span style="font-size: 0.8rem; color: var(--text-muted);"><i class="ri-calendar-line"></i> Billing Date: ${bill.billingDate}</span>
+                                </div>
+                                <span class="badge" style="background-color: ${bill.status === 'PAID' ? 'var(--primary-light)' : '#fef2f2'}; color: ${bill.status === 'PAID' ? 'var(--primary-hover)' : '#ef4444'}; padding: 0.35rem 0.75rem; border-radius: 999px; font-weight: 700; font-size: 0.75rem;">${statusLabel}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; background-color: var(--bg-main); border-radius: var(--radius-md); padding: 1rem; border: 1px solid rgba(13,148,136,0.08); flex-wrap: wrap; gap: 0.75rem;">
+                                <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                                    <div>
+                                        <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Base Charge</span>
+                                        <span style="font-weight: 600; font-size: 0.95rem;">RS ${bill.amount.toFixed(2)}</span>
+                                    </div>
+                                    <div>
+                                        <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">GST (18%)</span>
+                                        <span style="font-weight: 600; font-size: 0.95rem;">RS ${bill.gstAmount.toFixed(2)}</span>
+                                    </div>
+                                    <div>
+                                        <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Total Gross</span>
+                                        <span style="font-weight: 800; font-size: 1.05rem; color: var(--primary);">RS ${bill.totalAmount.toFixed(2)}</span>
+                                    </div>
+                                </div>
+                                ${actionButton}
+                            </div>
+                            ${paymentDetailsHTML}
+                        </div>
+                    `;
+                }).join('');
+            } catch (err) {
+                container.innerHTML = '<div style="text-align:center;color:red;padding:2rem;">Could not query invoices. Make sure server is running.</div>';
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        async function openPayInvoiceModal(billId) {
+            try {
+                const res = await fetch(`${API_BILLS}/${billId}`);
+                if (!res.ok) throw new Error();
+                const bill = await res.json();
+
+                document.getElementById('pay-bill-id').value = bill.id;
+                document.getElementById('pay-invoice-amount').textContent = `RS ${bill.totalAmount.toFixed(2)}`;
+                document.getElementById('pay-invoice-gst-breakdown').textContent = `(Base: RS ${bill.amount.toFixed(2)} + GST: RS ${bill.gstAmount.toFixed(2)})`;
+                
+                // Reset form fields
+                document.getElementById('payment-method-select').value = 'UPI';
+                document.getElementById('upi-txn-id').value = '';
+                document.getElementById('card-number').value = '';
+                document.getElementById('card-expiry').value = '';
+                document.getElementById('card-cvv').value = '';
+                document.getElementById('cash-receipt-no').value = '';
+                
+                // Dynamically prefill amount in UPI QR code
+                try {
+                    const amount = bill.totalAmount.toFixed(2);
+                    const upiLink = `upi://pay?pa=8767323603@ibl&pn=Thakre%20Hospital&am=${amount}&cu=INR`;
+                    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiLink)}`;
+                    const upiQrImg = document.querySelector('#pay-invoice-modal #upi-qrcode img');
+                    if (upiQrImg) {
+                        upiQrImg.src = qrUrl;
+                    }
+                } catch (qrErr) {
+                    console.error('Error generating dynamic QR code:', qrErr);
+                }
+                
+                togglePaymentFields();
+                openModal('pay-invoice-modal');
+            } catch (err) {
+                showToast('Failed to load invoice payment details.', 'error');
+            }
+        }
+
+        function togglePaymentFields() {
+            const method = document.getElementById('payment-method-select').value;
+            document.getElementById('payment-upi-view').style.display = method === 'UPI' ? 'flex' : 'none';
+            document.getElementById('payment-card-view').style.display = method === 'CARD' ? 'flex' : 'none';
+            document.getElementById('payment-cash-view').style.display = method === 'CASH' ? 'flex' : 'none';
+
+            // Adjust required attributes
+            document.getElementById('upi-txn-id').required = method === 'UPI';
+            document.getElementById('card-number').required = method === 'CARD';
+            document.getElementById('card-expiry').required = method === 'CARD';
+            document.getElementById('card-cvv').required = method === 'CARD';
+            document.getElementById('cash-receipt-no').required = method === 'CASH';
+        }
+
+        async function submitInvoicePayment(e) {
+            e.preventDefault();
+            const billId = document.getElementById('pay-bill-id').value;
+            const method = document.getElementById('payment-method-select').value;
+            
+            let txnId = '';
+            if (method === 'UPI') txnId = document.getElementById('upi-txn-id').value.trim();
+            else if (method === 'CARD') txnId = 'CRD-' + Math.floor(100000 + Math.random() * 900000);
+            else if (method === 'CASH') txnId = document.getElementById('cash-receipt-no').value.trim();
+
+            try {
+                // Fetch invoice first
+                const getRes = await fetch(`${API_BILLS}/${billId}`);
+                if (!getRes.ok) throw new Error();
+                const bill = await getRes.json();
+
+                bill.status = 'PAID';
+                bill.paymentMethod = method;
+                bill.transactionId = txnId;
+                bill.paymentDate = new Date().toISOString().split('T')[0];
+
+                const putRes = await fetch(`${API_BILLS}/${billId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(bill)
+                });
+
+                if (putRes.ok) {
+                    showToast('Payment processed successfully! Receipt generated.');
+                    closeModal('pay-invoice-modal');
+                    searchPatientBills();
+                } else {
+                    throw new Error();
+                }
+            } catch (err) {
+                showToast('Failed to complete payment transaction.', 'error');
+            }
+        }
+
+        async function printInvoiceReceipt(billId) {
+            try {
+                const res = await fetch(`${API_BILLS}/${billId}`);
+                if (!res.ok) throw new Error();
+                const bill = await res.json();
+
+                const printContainer = document.getElementById('receipt-print-template');
+                printContainer.innerHTML = `
+                    <div class="invoice-print-header">
+                        <div class="invoice-print-logo">
+                            <i class="ri-heart-pulse-fill"></i>
+                            <div class="invoice-print-logo-text">
+                                <h1>THAKRE HOSPITAL</h1>
+                                <span>Multispeciality & MedCare</span>
+                            </div>
+                        </div>
+                        <div class="invoice-print-title">
+                            <h2>OFFICIAL RECEIPT</h2>
+                            <p style="margin:0;font-size:0.85rem;color:#64748b;">Invoice ID: #${bill.id}</p>
+                        </div>
+                    </div>
+
+                    <div class="invoice-print-details-grid">
+                        <div class="invoice-print-block">
+                            <h3>Hospital Details</h3>
+                            <p><strong>Thakre Multispeciality Hospital</strong></p>
+                            <p>Nagpur, Maharashtra, India</p>
+                            <p>Phone: +91 712 000 0000</p>
+                            <p>Email: billing@thakrehospital.in</p>
+                        </div>
+                        <div class="invoice-print-block">
+                            <h3>Invoice Details</h3>
+                            <p><strong>Patient Name:</strong> ${bill.patient.name}</p>
+                            <p><strong>Patient ID:</strong> ${bill.patient.id}</p>
+                            <p><strong>Billing Date:</strong> ${bill.billingDate}</p>
+                            <p><strong>Payment Status:</strong> ${bill.status}</p>
+                        </div>
+                    </div>
+
+                    <table class="invoice-print-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 70%;">Services Rendered / Description</th>
+                                <th style="width: 30%; text-align: right;">Amount (RS)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>${bill.services}</td>
+                                <td style="text-align: right;">RS ${bill.amount.toFixed(2)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="invoice-print-summary">
+                        <table class="invoice-print-summary-table">
+                            <tr>
+                                <td>Base Amount:</td>
+                                <td><strong>RS ${bill.amount.toFixed(2)}</strong></td>
+                            </tr>
+                            <tr>
+                                <td>GST (18%):</td>
+                                <td><strong>RS ${bill.gstAmount.toFixed(2)}</strong></td>
+                            </tr>
+                            <tr class="total-row">
+                                <td>Grand Total:</td>
+                                <td>RS ${bill.totalAmount.toFixed(2)}</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    ${bill.status === 'PAID' ? `
+                    <div style="border: 1px solid #10b981; background-color: #ecfdf5; border-radius: 8px; padding: 1rem; margin-bottom: 3rem; color: #065f46;">
+                        <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem;"><i class="ri-checkbox-circle-fill"></i> Transaction Verified</h4>
+                        <p style="margin: 0.25rem 0; font-size: 0.85rem;"><strong>Payment Method:</strong> ${bill.paymentMethod}</p>
+                        <p style="margin: 0.25rem 0; font-size: 0.85rem;"><strong>Transaction Reference ID:</strong> ${bill.transactionId}</p>
+                        <p style="margin: 0.25rem 0; font-size: 0.85rem;"><strong>Payment Date:</strong> ${bill.paymentDate}</p>
+                    </div>
+                    ` : ''}
+
+                    <div style="display: flex; justify-content: space-between; margin-top: 4rem;">
+                        <div style="text-align: center; width: 200px;">
+                            <div style="border-bottom: 1px solid #000; height: 40px;"></div>
+                            <p style="font-size: 0.8rem; margin-top: 0.5rem;">Patient / Depositor Signature</p>
+                        </div>
+                        <div style="text-align: center; width: 200px;">
+                            <div style="border-bottom: 1px solid #000; height: 40px; display: flex; align-items: flex-end; justify-content: center; font-family: 'Outfit'; font-weight: 700; color: #0d9488; font-size: 0.9rem;">Thakre Accounts</div>
+                            <p style="font-size: 0.8rem; margin-top: 0.5rem;">Authorized Signatory</p>
+                        </div>
+                    </div>
+
+                    <div class="invoice-print-footer" style="margin-top: 3rem;">
+                        <p>This is a computer-generated transaction invoice and receipt. No physical signature is mandatory.</p>
+                        <p>Thank you for choosing Thakre Multispeciality Hospital.</p>
+                    </div>
+                `;
+
+                // Trigger print
+                window.print();
+            } catch (err) {
+                showToast('Failed to load print receipt templates.', 'error');
+            }
+        }
+    </script>
+    <!-- AI CHATBOT -->
+    <button class="chatbot-fab" onclick="toggleChat()" style="position:fixed;bottom:28px;right:28px;display:inline-flex;align-items:center;gap:0.5rem;background:linear-gradient(135deg,var(--primary),var(--primary-hover));color:white;padding:0.75rem 1.4rem;border-radius:50px;font-size:0.85rem;font-weight:700;font-family:'Outfit',sans-serif;letter-spacing:0.02em;box-shadow:0 8px 25px rgba(13,148,136,0.45);z-index:9998;border:none;cursor:pointer;transition:all 0.3s;height:auto;width:auto;"
+       onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 28px rgba(13,148,136,0.6)'"
+       onmouseout="this.style.transform='';this.style.boxShadow='0 8px 25px rgba(13,148,136,0.45)'">
+        <i class="ri-robot-2-line" style="font-size:1.1rem;"></i>
+        AI Health Assistant
+    </button>
+    <div class="chatbot-window" id="chatbot-window" style="position:fixed;bottom:100px;right:28px;width:370px;height:520px;background:var(--bg-card);border-radius:var(--radius-lg);box-shadow:0 25px 60px rgba(0,0,0,0.18);border:1px solid var(--border-color);display:flex;flex-direction:column;z-index:9997;overflow:hidden;transform:scale(0) translateY(20px);transform-origin:bottom right;opacity:0;pointer-events:none;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);">
+        <div class="chatbot-header" style="background:linear-gradient(135deg,var(--primary),var(--primary-hover));padding:1rem 1.25rem;display:flex;align-items:center;gap:0.75rem;">
+            <div class="chatbot-avatar" style="width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:white;"><i class="ri-robot-2-line"></i></div>
+            <div class="chatbot-header-info">
+                <h4 style="color:white;font-size:0.95rem;font-weight:700;margin:0;">Health Assistant</h4>
+                <span style="color:rgba(255,255,255,0.75);font-size:0.75rem;display:flex;align-items:center;gap:0.3rem;"><div style="width:7px;height:7px;background:#4ade80;border-radius:50%;"></div> Online</span>
+            </div>
+            <button class="chatbot-close" onclick="toggleChat()" style="margin-left:auto;background:none;border:none;color:white;font-size:1.5rem;cursor:pointer;opacity:0.8;">&times;</button>
+        </div>
+        <div class="chatbot-messages" id="chatbot-messages" style="flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:0.75rem;background:var(--bg-main);">
+            <div class="chat-msg bot" style="display:flex;gap:0.5rem;max-width:85%;align-self:flex-start;">
+                <div class="chat-msg-avatar" style="width:28px;height:28px;border-radius:50%;background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex-shrink:0;align-self:flex-end;"><i class="ri-robot-2-line"></i></div>
+                <div class="chat-bubble" style="padding:0.65rem 0.9rem;border-radius:16px;font-size:0.83rem;line-height:1.5;background:var(--bg-card);color:var(--text-main);border-bottom-left-radius:4px;box-shadow:var(--shadow-sm);border:1px solid var(--border-color);">Hi there! 👋 I'm your AI Health Assistant. How can I help you today?</div>
+            </div>
+            <div class="chat-quick-replies" id="chat-quick" style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.4rem;">
+                <button class="quick-reply-btn" onclick="sendChat('Book appointment')" style="padding:0.3rem 0.7rem;border-radius:999px;border:1.5px solid var(--primary);color:var(--primary);background:none;font-size:0.75rem;cursor:pointer;">Book appointment</button>
+                <button class="quick-reply-btn" onclick="sendChat('OPD timings')" style="padding:0.3rem 0.7rem;border-radius:999px;border:1.5px solid var(--primary);color:var(--primary);background:none;font-size:0.75rem;cursor:pointer;">OPD timings</button>
+                <button class="quick-reply-btn" onclick="sendChat('Emergency contact')" style="padding:0.3rem 0.7rem;border-radius:999px;border:1.5px solid var(--primary);color:var(--primary);background:none;font-size:0.75rem;cursor:pointer;">Emergency contact</button>
+            </div>
+        </div>
+        <div class="chatbot-input-bar" style="display:flex;gap:0.5rem;padding:0.75rem 1rem;border-top:1px solid var(--border-color);background:var(--bg-card);">
+            <input type="text" id="chat-input" placeholder="Type a message..." onkeypress="if(event.key==='Enter') sendChat()" style="flex:1;height:40px;border:1.5px solid var(--border-color);border-radius:999px;padding:0 1rem;font-size:0.84rem;background:var(--bg-main);color:var(--text-main);outline:none;">
+            <button class="chatbot-send-btn" onclick="sendChat()" style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-hover));border:none;color:white;font-size:1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;"><i class="ri-send-plane-fill"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // Theme init (Force light mode for patient portal)
+        document.documentElement.setAttribute('data-theme', 'light');
+
+        // Star Rating Logic
+        let currentRating = 5;
+        document.querySelectorAll('#feedback-rating i').forEach(star => {
+            star.addEventListener('click', (e) => {
+                currentRating = parseInt(e.target.getAttribute('data-val'));
+                document.querySelectorAll('#feedback-rating i').forEach(s => {
+                    if (parseInt(s.getAttribute('data-val')) <= currentRating) {
+                        s.classList.add('active'); s.style.color = '#f59e0b';
+                    } else {
+                        s.classList.remove('active'); s.style.color = 'var(--border-color)';
+                    }
+                });
+            });
+        });
+
+        // Submit Feedback
+        async function submitFeedback(e) {
+            e.preventDefault();
+            const payload = {
+                name: document.getElementById('feedback-name').value,
+                email: document.getElementById('feedback-email').value,
+                category: document.getElementById('feedback-category').value,
+                rating: currentRating,
+                message: document.getElementById('feedback-message').value
+            };
+            const btn = e.target.querySelector('button'); btn.disabled = true; btn.innerHTML = 'Submitting...';
+            try {
+                await fetch('/api/feedback', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+                showToast('Thank you for your feedback!', 'success');
+                e.target.reset(); currentRating = 5; document.querySelectorAll('#feedback-rating i').forEach(s=>s.style.color = '#f59e0b');
+            } catch(err) { showToast('Error submitting feedback', 'error'); }
+            btn.disabled = false; btn.innerHTML = '<i class="ri-send-plane-fill"></i> Submit Feedback';
+        }
+
+        // Chatbot Logic
+        function toggleChat() { 
+            const w = document.getElementById('chatbot-window');
+            if(w.style.opacity === '1') {
+                w.style.opacity = '0'; w.style.transform = 'scale(0) translateY(20px)'; w.style.pointerEvents = 'none';
+            } else {
+                w.style.opacity = '1'; w.style.transform = 'scale(1) translateY(0)'; w.style.pointerEvents = 'all';
+            }
+        }
+        async function sendChat(text) {
+            const input = document.getElementById('chat-input');
+            const msg = text || input.value.trim();
+            if(!msg) return;
+            
+            input.value = '';
+            const msgs = document.getElementById('chatbot-messages');
+            const quick = document.getElementById('chat-quick');
+            if(quick) quick.style.display = 'none';
+            
+            // Add user message
+            msgs.innerHTML += `<div class="chat-msg user" style="display:flex;flex-direction:row-reverse;gap:0.5rem;max-width:85%;align-self:flex-end;"><div class="chat-bubble" style="padding:0.65rem 0.9rem;border-radius:16px;font-size:0.83rem;line-height:1.5;background:linear-gradient(135deg,var(--primary),var(--primary-hover));color:white;border-bottom-right-radius:4px;">${msg}</div></div>`;
+            msgs.scrollTop = msgs.scrollHeight;
+            
+            // Add typing indicator
+            const tid = 'typing-'+Date.now();
+            msgs.innerHTML += `<div class="chat-msg bot" id="${tid}" style="display:flex;gap:0.5rem;max-width:85%;align-self:flex-start;"><div class="chat-msg-avatar" style="width:28px;height:28px;border-radius:50%;background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex-shrink:0;align-self:flex-end;"><i class="ri-robot-2-line"></i></div><div class="chat-typing" style="padding:0.65rem 0.9rem;border-radius:16px;border-bottom-left-radius:4px;background:var(--bg-card);border:1px solid var(--border-color);font-size:0.83rem;">typing...</div></div>`;
+            msgs.scrollTop = msgs.scrollHeight;
+            
+            // Bot Response Engine
+            setTimeout(() => {
+                document.getElementById(tid).remove();
+                const q = msg.toLowerCase();
+                let reply = '';
+
+                // Greetings
+                if (q.match(/\b(hi|hello|hey|good morning|good evening|good afternoon|namaste)\b/)) {
+                    reply = "Hello! 👋 Welcome to <strong>Thakre Multispeciality Hospital</strong>. I'm your AI Health Assistant. How can I help you today?<br><br>You can ask me about:<br>📅 Appointments &nbsp;|&nbsp; 👨‍⚕️ Doctors<br>🏥 Services &nbsp;|&nbsp; 💊 Lab Tests<br>🛏️ Bed Admission &nbsp;|&nbsp; 💳 Billing<br>🚨 Emergency &nbsp;|&nbsp; 📍 Location";
+                }
+
+                // Appointment booking
+                else if (q.match(/\b(book|appointment|schedule|consult|visit|slot)\b/)) {
+                    reply = "📅 <strong>Book an Appointment</strong><br><br>To book an appointment:<br>1️⃣ Scroll up to the <strong>'Book Appointment'</strong> section<br>2️⃣ Enter your <em>Name, Phone, Email</em><br>3️⃣ Select a <em>Doctor</em> from the dropdown<br>4️⃣ Choose a <em>Date & Time</em><br>5️⃣ Click <strong>'Confirm Appointment'</strong> ✅<br><br>You can also select a <em>Bed Type</em> if you need admission along with your appointment.";
+                }
+
+                // OPD / Timing
+                else if (q.match(/\b(time|timing|opd|hours|open|schedule|when)\b/)) {
+                    reply = "🕘 <strong>Hospital Timings</strong><br><br>🏥 <strong>OPD:</strong> Monday–Saturday, 9 AM – 5 PM<br>🧪 <strong>Laboratory:</strong> Monday–Saturday, 8 AM – 7 PM<br>🚨 <strong>Emergency:</strong> 24/7 (Always Open)<br>📞 For same-day appointments call: <strong>+91-712-000-0000</strong>";
+                }
+
+                // Emergency
+                else if (q.match(/\b(emergency|urgent|accident|ambulance|critical|icu)\b/)) {
+                    reply = "🚨 <strong>Emergency Services</strong><br><br>Our emergency department is open <strong>24/7</strong>.<br><br>📞 Emergency Hotline: <strong>+91-712-2005</strong><br>🏥 Emergency Ward: <em>Ground Floor, Block A</em><br>🚑 Ambulance: Call <strong>108</strong> (Free)<br><br>⚠️ For life-threatening situations, please call emergency services immediately.";
+                }
+
+                // Doctors / Specialists
+                else if (q.match(/\b(doctor|dr|specialist|surgeon|physician|cardiolog|neurolog|orthoped|gynecolog|pediatric|dermatolog)\b/)) {
+                    reply = "👨‍⚕️ <strong>Our Medical Team</strong><br><br>Thakre Hospital has specialists in:<br>❤️ Cardiology &nbsp;|&nbsp; 🧠 Neurology<br>🦴 Orthopedics &nbsp;|&nbsp; 👶 Pediatrics<br>🌸 Gynecology &nbsp;|&nbsp; 🔬 Pathology<br>🦷 Dental &nbsp;|&nbsp; 👁️ Ophthalmology<br><br>Scroll to the <strong>'Our Doctors'</strong> section to see all available doctors and their specializations, then book directly from there!";
+                }
+
+                // Services
+                else if (q.match(/\b(service|treatment|department|facility|facilities|offer)\b/)) {
+                    reply = "🏥 <strong>Our Services</strong><br><br>We offer a wide range of healthcare services:<br><br>✅ Outpatient & Inpatient Care<br>✅ Emergency & Trauma Care<br>✅ Diagnostic Laboratory<br>✅ Radiology & Imaging<br>✅ Surgical Procedures<br>✅ Maternity & Neonatal Care<br>✅ Physiotherapy & Rehabilitation<br>✅ Pharmacy<br><br>Scroll to <strong>'Our Services'</strong> on the homepage for full details.";
+                }
+
+                // Lab / Tests
+                else if (q.match(/\b(lab|laboratory|test|blood|report|sample|pathology|diagnostic|scan|xray|x-ray|mri|ct)\b/)) {
+                    reply = "🔬 <strong>Laboratory & Diagnostics</strong><br><br>Our fully equipped lab offers:<br>🩸 Blood Tests (CBC, Sugar, Lipid Profile, etc.)<br>🧪 Urine & Stool Analysis<br>📸 X-Ray & CT Scan<br>🧲 MRI Imaging<br>🫀 ECG & Echo<br><br>⏰ Lab Hours: <strong>8 AM – 7 PM</strong> (Mon–Sat)<br>📞 Sample Collection: +91-712-000-0000<br><br>Reports are typically available within <strong>24–48 hours</strong>.";
+                }
+
+                // Bed / Admission
+                else if (q.match(/\b(bed|admission|admit|ward|room|icu|general ward|private|semi-private)\b/)) {
+                    reply = "🛏️ <strong>Bed & Admission</strong><br><br>We have the following room types available:<br>🏠 <strong>General Ward</strong> – Shared, affordable care<br>🚪 <strong>Semi-Private</strong> – 2-bed sharing<br>👑 <strong>Private Room</strong> – Full privacy & comfort<br>❤️ <strong>ICU</strong> – Intensive monitoring & care<br><br>To request a bed, select your preferred <em>Bed Type</em> while booking an appointment in the <strong>'Book Appointment'</strong> section.";
+                }
+
+                // Billing / Invoice / Payment
+                else if (q.match(/\b(bill|billing|invoice|pay|payment|receipt|cost|price|fee|charge)\b/)) {
+                    reply = "💳 <strong>Billing & Payments</strong><br><br>You can view and pay your bills online:<br><br>1️⃣ Scroll to the <strong>'My Invoices'</strong> section<br>2️⃣ Enter your <em>Patient ID</em><br>3️⃣ View all outstanding & paid invoices<br>4️⃣ Click <strong>'Pay Now'</strong> for unpaid bills<br>5️⃣ Download receipts for paid bills<br><br>We accept: 💵 Cash | 💳 Card | 📱 UPI | 🏦 Net Banking";
+                }
+
+                // Location / Address
+                else if (q.match(/\b(location|address|where|direction|map|reach|near|nagpur)\b/)) {
+                    reply = "📍 <strong>Our Location</strong><br><br>🏥 <strong>Thakre Multispeciality Hospital</strong><br>Nagpur, Maharashtra, India<br><br>📞 Phone: <strong>+91-712-000-0000</strong><br>📧 Email: <strong>info@thakrehospital.in</strong><br><br>🕘 Visiting Hours: 9 AM – 8 PM<br>🚗 Ample parking available on premises";
+                }
+
+                // Contact / Phone
+                else if (q.match(/\b(contact|phone|number|call|email|reach|helpline)\b/)) {
+                    reply = "📞 <strong>Contact Us</strong><br><br>🏥 <strong>Reception:</strong> +91-712-000-0000<br>🚨 <strong>Emergency:</strong> +91-712-2005<br>🧪 <strong>Lab Enquiry:</strong> +91-712-000-0001<br>💳 <strong>Billing:</strong> billing@thakrehospital.in<br>🌐 <strong>General:</strong> info@thakrehospital.in<br><br>Our reception is available <strong>Monday–Saturday, 8 AM – 8 PM</strong>.";
+                }
+
+                // Symptoms / Medical advice
+                else if (q.match(/\b(headache|fever|pain|cough|cold|vomit|nausea|dizzy|fatigue|breathe|chest|stomach|back|joint)\b/)) {
+                    reply = "🩺 <strong>Medical Concern Noted</strong><br><br>I'm an AI assistant and <strong>cannot provide medical diagnoses</strong>. For proper diagnosis and treatment, please:<br><br>1️⃣ <strong>Book an appointment</strong> with our General Physician<br>2️⃣ Visit our <strong>Emergency Ward</strong> if symptoms are severe<br>3️⃣ Call <strong>+91-712-000-0000</strong> for guidance<br><br>⚠️ <em>If you have chest pain, difficulty breathing, or any life-threatening symptom — call 108 immediately.</em>";
+                }
+
+                // Insurance
+                else if (q.match(/\b(insurance|cashless|tpa|mediclaim|ayushman|pmjay|policy)\b/)) {
+                    reply = "🏦 <strong>Insurance & Cashless Facility</strong><br><br>We accept major health insurance providers including:<br>✅ Ayushman Bharat (PMJAY)<br>✅ Star Health Insurance<br>✅ HDFC Ergo Health<br>✅ New India Assurance<br>✅ Medi-Assist & other TPAs<br><br>For insurance queries, contact our billing desk:<br>📞 +91-712-000-0000<br>📧 billing@thakrehospital.in";
+                }
+
+                // Visiting hours
+                else if (q.match(/\b(visit|visitor|visiting|family|relative|see patient)\b/)) {
+                    reply = "👥 <strong>Visitor Guidelines</strong><br><br>🕐 <strong>Visiting Hours:</strong> 9 AM – 12 PM &amp; 5 PM – 8 PM<br>👤 Max <strong>2 visitors</strong> per patient at a time<br>🚫 Children under 10 not permitted in wards<br>🧼 Hand sanitization mandatory before entering<br>🔕 Please maintain silence in patient areas<br><br>ICU visits are subject to doctor's permission.";
+                }
+
+                // About hospital
+                else if (q.match(/\b(about|hospital|thakre|history|since|established|trust)\b/)) {
+                    reply = "🏥 <strong>About Thakre Multispeciality Hospital</strong><br><br>Established in <strong>2010</strong>, Thakre Multispeciality Hospital is a trusted name in healthcare in Nagpur, Maharashtra.<br><br>✨ State-of-the-art medical equipment<br>👨‍⚕️ 50+ experienced doctors & specialists<br>🛏️ 200+ beds across all ward categories<br>🔬 NABL-accredited diagnostic laboratory<br>🚨 24/7 Emergency & Trauma services<br><br><em>'Your Health, Our Priority'</em>";
+                }
+
+                // Positive short replies / acknowledgements
+                else if (
+                    ['ok','okay','k','fine','sure','yes','yep','yup','yeah','good','nice','wow',
+                     'cool','great','perfect','awesome','alright','understood','got it','noted',
+                     'i see','i got it','got','no problem','np','sounds good','all good','clear',
+                     'absolutely','of course','definitely','right','true','correct'].some(w => q.trim() === w || q.includes(w))
+                ) {
+                    reply = "😊 Glad I could help! Is there anything else you'd like to know?<br><br>Feel free to ask about:<br>📅 <strong>Appointments</strong> &nbsp;|&nbsp; 👨‍⚕️ <strong>Doctors</strong><br>🏥 <strong>Services</strong> &nbsp;|&nbsp; 💳 <strong>Billing</strong><br>📞 Or call: <strong>+91-712-000-0000</strong>";
+                }
+
+                // Thank you phrases
+                else if (
+                    ['thank you','thanks','thank u','thankyou','thnks','thnx','thx','dhanyawad',
+                     'shukriya','ty','many thanks','thanks a lot','thank you so much'].some(w => q.includes(w))
+                ) {
+                    reply = "🙏 You're most welcome! We're happy to assist you.<br><br>Feel free to reach out anytime. Wishing you good health! 💚<br><br>Is there anything else I can help you with today?";
+                }
+
+                // Welcome / you're welcome
+                else if (['welcome','you\'re welcome','ur welcome','no worries','no problem','don\'t mention','my pleasure'].some(w => q.includes(w))) {
+                    reply = "😊 Thank you! We love serving our patients at <strong>Thakre Multispeciality Hospital</strong>.<br>Is there anything I can assist you with?";
+                }
+
+                // Goodbye
+                else if (['bye','goodbye','good bye','see you','see ya','take care','have a good day','have a nice day','cya','tataa','alvida'].some(w => q.includes(w))) {
+                    reply = "👋 Goodbye! Take care and stay healthy.<br><br>🏥 <strong>Thakre Multispeciality Hospital</strong> is always here for you.<br>For any emergency, call <strong>+91-712-2005</strong> anytime. 💚";
+                }
+
+                // Negative / No
+                else if (['no','nope','nah','not really','nothing','never mind','nevermind','nahin','nahi'].some(w => q.trim() === w || q.includes(w))) {
+                    reply = "👍 No problem at all! Feel free to ask me anything whenever you need help.<br><br>Wishing you a healthy day! 😊";
+                }
+
+                // Default / fallback
+                else {
+                    reply = "🤔 I'm not sure about that. Here's what I <em>can</em> help you with:<br><br>📅 <strong>Book Appointment</strong> – type 'book appointment'<br>👨‍⚕️ <strong>Doctors</strong> – type 'doctors'<br>🕘 <strong>Timings</strong> – type 'timings'<br>💳 <strong>Billing</strong> – type 'billing'<br>🚨 <strong>Emergency</strong> – type 'emergency'<br>📍 <strong>Location</strong> – type 'location'<br>🔬 <strong>Lab Tests</strong> – type 'lab test'<br><br>Or call us at <strong>+91-712-000-0000</strong> 📞";
+                }
+
+                msgs.innerHTML += `<div class="chat-msg bot" style="display:flex;gap:0.5rem;max-width:90%;align-self:flex-start;"><div class="chat-msg-avatar" style="width:28px;height:28px;border-radius:50%;background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex-shrink:0;align-self:flex-end;"><i class="ri-robot-2-line"></i></div><div class="chat-bubble" style="padding:0.75rem 1rem;border-radius:16px;font-size:0.83rem;line-height:1.6;background:var(--bg-card);color:var(--text-main);border-bottom-left-radius:4px;box-shadow:var(--shadow-sm);border:1px solid var(--border-color);">${reply}</div></div>`;
+                msgs.scrollTop = msgs.scrollHeight;
+            }, 1000);
+        }
+    </script>
+
+
+</body>
+</html>
