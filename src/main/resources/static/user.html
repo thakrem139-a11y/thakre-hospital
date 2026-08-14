@@ -1886,8 +1886,22 @@
             const tid = 'typing-'+Date.now();
             msgs.innerHTML += `<div class="chat-msg bot" id="${tid}" style="display:flex;gap:0.5rem;max-width:85%;align-self:flex-start;"><div class="chat-msg-avatar" style="width:28px;height:28px;border-radius:50%;background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex-shrink:0;align-self:flex-end;"><i class="ri-robot-2-line"></i></div><div class="chat-typing" style="padding:0.65rem 0.9rem;border-radius:16px;border-bottom-left-radius:4px;background:var(--bg-card);border:1px solid var(--border-color);font-size:0.83rem;">typing...</div></div>`;
             msgs.scrollTop = msgs.scrollHeight;
+
+            // Connect to Spring Boot API Endpoint
+            try {
+                const res = await fetch('/api/chat?message=' + encodeURIComponent(msg));
+                if (res.ok) {
+                    const apiReply = await res.text();
+                    document.getElementById(tid)?.remove();
+                    msgs.innerHTML += `<div class="chat-msg bot" style="display:flex;gap:0.5rem;max-width:90%;align-self:flex-start;"><div class="chat-msg-avatar" style="width:28px;height:28px;border-radius:50%;background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex-shrink:0;align-self:flex-end;"><i class="ri-robot-2-line"></i></div><div class="chat-bubble" style="padding:0.75rem 1rem;border-radius:16px;font-size:0.83rem;line-height:1.6;background:var(--bg-card);color:var(--text-main);border-bottom-left-radius:4px;box-shadow:var(--shadow-sm);border:1px solid var(--border-color);">${apiReply}</div></div>`;
+                    msgs.scrollTop = msgs.scrollHeight;
+                    return;
+                }
+            } catch (err) {
+                console.warn('API error, fallback to local engine:', err);
+            }
             
-            // Bot Response Engine
+            // Bot Response Engine Fallback
             setTimeout(() => {
                 document.getElementById(tid).remove();
                 const q = msg.toLowerCase();

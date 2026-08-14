@@ -32,3 +32,8 @@ build/
 ### VS Code ###
 .vscode/
 *.db
+
+# Local JDK & Subfolders
+oracleJdk-26/
+thakre-hospital/
+src/main/java/com/example/hospital/controller/mascot
